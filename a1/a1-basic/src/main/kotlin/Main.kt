@@ -1,7 +1,6 @@
 import javafx.application.Application
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
@@ -14,31 +13,30 @@ import javafx.stage.Stage
 
 
 class Main : Application()  {
-    class Note(var text: String, var isArchived: Boolean = false) {
-    }
+    class Note(var text: String, var isArchived: Boolean = false)
 
-    fun CreateNotes(notes: MutableList<Note>, isListView: Boolean): MutableList<AnchorPane> {
-        var noteList = mutableListOf<AnchorPane>()
+    private fun createNotes(notes: MutableList<Note>, isListView: Boolean): MutableList<AnchorPane> {
+        val noteList = mutableListOf<AnchorPane>()
         for (note in notes) {
             if (isListView) {
-                noteList.add(CreateNoteListView(note))
+                noteList.add(createNoteListView(note))
             } else {
-                noteList.add(CreateNoteGridView(note))
+                noteList.add(createNoteGridView(note))
             }
         }
 
         return noteList
     }
 
-    fun CreateNoteListView(note: Note): AnchorPane {
-        var noteLabel = Label(note.text)
+    private fun createNoteListView(note: Note): AnchorPane {
+        val noteLabel = Label(note.text)
         noteLabel.isWrapText = true
         noteLabel.prefWidth = 500.0
 
-        var archiveCheckBox = CheckBox()
+        val archiveCheckBox = CheckBox()
         archiveCheckBox.isSelected = note.isArchived
 
-        var noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
+        val noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
 
         if (note.isArchived) {
             noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTGRAY, CornerRadii(10.0), null))
@@ -61,15 +59,15 @@ class Main : Application()  {
         return noteAnchorPane
     }
 
-    fun CreateNoteGridView(note: Note): AnchorPane {
-        var noteLabel = Label(note.text)
+    private fun createNoteGridView(note: Note): AnchorPane {
+        val noteLabel = Label(note.text)
         noteLabel.isWrapText = true
         noteLabel.setPrefSize(225.0, 180.0)
 
-        var archiveCheckBox = CheckBox()
+        val archiveCheckBox = CheckBox()
         archiveCheckBox.isSelected = note.isArchived
 
-        var noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
+        val noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
 
         if (note.isArchived) {
             noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTGRAY, CornerRadii(10.0), null))
@@ -94,7 +92,7 @@ class Main : Application()  {
 
     override fun start(stage: Stage) {
         // states
-        var isListView = true
+        val isListView = true
 
         val root = BorderPane()
 
@@ -132,7 +130,7 @@ class Main : Application()  {
         }
 
         // notes
-        var notes = mutableListOf<Note>(
+        val notes = mutableListOf<Note>(
             Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
             Note("note2", true),
             Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
@@ -140,28 +138,28 @@ class Main : Application()  {
             Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
 
         // notes list view
-        var notePaneList = VBox()
-        var notesListView = CreateNotes(notes, true)
+        val notePaneList = VBox()
+        val notesListView = createNotes(notes, true)
         for (note in notesListView) {
             notePaneList.children.add(note)
         }
         notePaneList.spacing = 10.0
 
         // notes grid view
-        var notePaneGrid = FlowPane()
-        var notesGridView = CreateNotes(notes, false)
+        val notePaneGrid = FlowPane()
+        val notesGridView = createNotes(notes, false)
         for (note in notesGridView) {
             notePaneGrid.children.add(note)
             FlowPane.setMargin(note, Insets(10.0, 10.0, 10.0, 10.0))
         }
-        
+
         // put notes in scrollpane
-        var notesScrollPane = if (isListView) {
+        val notesScrollPane = if (isListView) {
             ScrollPane(notePaneList)
         } else {
             ScrollPane(notePaneGrid)
         }
-        notesScrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER;
+        notesScrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
         notesScrollPane.isFitToWidth = true
 
         // root pane
