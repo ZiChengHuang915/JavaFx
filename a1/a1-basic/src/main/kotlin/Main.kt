@@ -10,7 +10,7 @@ import javafx.stage.Stage
 
 class Main : Application()  {
     private val root = BorderPane()
-    private val isListView = true
+    private val isListView = false
     // notes
     // first note must be special and have empty text
     private val notes = mutableListOf<Note>(
@@ -25,7 +25,7 @@ class Main : Application()  {
     private var notesListView = createNotes(notes, true)
     // notes grid view
     private val notePaneGrid = FlowPane()
-    private val notesGridView = createNotes(notes, false)
+    private var notesGridView = createNotes(notes, false)
 
     class Note(var text: String, var isArchived: Boolean = false)
 
@@ -39,7 +39,11 @@ class Main : Application()  {
                     noteList.add(createNoteListView(note))
                 }
             } else {
-                noteList.add(createNoteGridView(note))
+                if (note == notes[0]) {
+                    noteList.add(createSpecialNoteGridView(note))
+                } else {
+                    noteList.add(createNoteGridView(note))
+                }
             }
         }
 
@@ -55,12 +59,11 @@ class Main : Application()  {
         createButton.onAction = EventHandler {
             val newNote = Note(noteTextArea.text)
             notes.add(newNote)
-            notesListView = createNotes(notes, true)
             reloadRoot()
         }
 
         val noteAnchorPane = AnchorPane(noteTextArea, createButton).apply {
-            this.border = Border(BorderStroke(Color.SALMON, BorderStrokeStyle.SOLID, CornerRadii(10.0), BorderWidths(10.0)))
+            this.border = Border(BorderStroke(Color.LIGHTSALMON, BorderStrokeStyle.SOLID, CornerRadii(10.0), BorderWidths(10.0)))
             this.prefHeight = 62.0
         }
         AnchorPane.setLeftAnchor(noteAnchorPane.children[0], 0.0)
@@ -103,6 +106,30 @@ class Main : Application()  {
         return noteAnchorPane
     }
 
+    private fun createSpecialNoteGridView(note: Note): AnchorPane {
+        val noteTextArea = TextArea()
+        val createButton = Button("Create")
+        createButton.setPrefSize(205.0, 20.0)
+        createButton.onAction = EventHandler {
+            val newNote = Note(noteTextArea.text)
+            notes.add(newNote)
+            reloadRoot()
+        }
+
+        val noteAnchorPane = AnchorPane(noteTextArea, createButton).apply {
+            this.border = Border(BorderStroke(Color.LIGHTSALMON, BorderStrokeStyle.SOLID, CornerRadii(10.0), BorderWidths(10.0)))
+            this.setPrefSize(225.0, 225.0)
+        }
+        AnchorPane.setLeftAnchor(noteAnchorPane.children[0], 0.0)
+        AnchorPane.setTopAnchor(noteAnchorPane.children[0], 0.0)
+        AnchorPane.setRightAnchor(noteAnchorPane.children[0], 0.0)
+        AnchorPane.setBottomAnchor(noteAnchorPane.children[1], 0.0)
+        AnchorPane.setLeftAnchor(noteAnchorPane.children[1], 0.0)
+        AnchorPane.setRightAnchor(noteAnchorPane.children[1], 0.0)
+
+        return noteAnchorPane
+    }
+
     private fun createNoteGridView(note: Note): AnchorPane {
         val noteLabel = Label(note.text)
         noteLabel.isWrapText = true
@@ -141,6 +168,10 @@ class Main : Application()  {
             notePaneGrid.children.clear()
         }
 
+        notesListView.clear()
+        notesGridView.clear()
+        notesListView = createNotes(notes, true)
+        notesGridView = createNotes(notes, false)
         for (note in notesListView) {
             notePaneList.children.add(note)
         }
