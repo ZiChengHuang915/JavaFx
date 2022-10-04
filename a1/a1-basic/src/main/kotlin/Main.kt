@@ -11,6 +11,7 @@ import javafx.stage.Stage
 class Main : Application()  {
     private val root = BorderPane()
     private var isListView = true
+    private var isArchivedChecked = true
     // notes
     // first note must be special and have empty text
     private val notes = mutableListOf<Note>(
@@ -36,13 +37,17 @@ class Main : Application()  {
                 if (note == notes[0]) {
                     noteList.add(createSpecialNoteListView(note))
                 } else {
-                    noteList.add(createNoteListView(note))
+                    if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
+                        noteList.add(createNoteListView(note))
+                    }
                 }
             } else {
                 if (note == notes[0]) {
                     noteList.add(createSpecialNoteGridView(note))
                 } else {
-                    noteList.add(createNoteGridView(note))
+                    if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
+                        noteList.add(createNoteGridView(note))
+                    }
                 }
             }
         }
@@ -81,6 +86,9 @@ class Main : Application()  {
         noteLabel.prefWidth = 500.0
 
         val archiveCheckBox = CheckBox()
+        archiveCheckBox.selectedProperty().addListener {
+                _, _, newValue -> note.isArchived = newValue
+        }
         archiveCheckBox.isSelected = note.isArchived
 
         val noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
@@ -136,6 +144,9 @@ class Main : Application()  {
         noteLabel.setPrefSize(225.0, 180.0)
 
         val archiveCheckBox = CheckBox()
+        archiveCheckBox.selectedProperty().addListener {
+                _, _, newValue -> note.isArchived = newValue
+        }
         archiveCheckBox.isSelected = note.isArchived
 
         val noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
@@ -225,6 +236,11 @@ class Main : Application()  {
 
         val archivedLabel = Label("Show archived: ")
         val archivedCheckBox = CheckBox()
+        archivedCheckBox.isSelected = isArchivedChecked
+        archivedCheckBox.selectedProperty().addListener {
+            _, _, newValue -> isArchivedChecked = newValue
+            reloadRoot()
+        }
         val archivedGroup = HBox(archivedLabel, archivedCheckBox).apply {
             this.spacing = 10.0
         }
