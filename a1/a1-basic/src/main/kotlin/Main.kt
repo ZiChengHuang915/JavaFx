@@ -12,13 +12,12 @@ class Main : Application()  {
     private val root = BorderPane()
     private var isListView = true
     private var isArchivedChecked = true
+    private var sortAscending = true
     // notes
-    // first note must be special and have empty text
     private val notes = mutableListOf<Note>(
-        Note(""),
-        Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
+        Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
         Note("note2", true),
-        Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
+        Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus."),
         Note("note4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
         Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
     // notes list view
@@ -31,25 +30,29 @@ class Main : Application()  {
     class Note(var text: String, var isArchived: Boolean = false)
 
     private fun createNotes(notes: MutableList<Note>, isListView: Boolean): MutableList<AnchorPane> {
+        if (sortAscending) {
+            notes.sortBy { n -> n.text.length }
+        } else {
+            notes.sortByDescending { n -> n.text.length }
+        }
+
         val noteList = mutableListOf<AnchorPane>()
         for (note in notes) {
             if (isListView) {
-                if (note == notes[0]) {
-                    noteList.add(createSpecialNoteListView(note))
-                } else {
-                    if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
-                        noteList.add(createNoteListView(note))
-                    }
+                if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
+                    noteList.add(createNoteListView(note))
                 }
             } else {
-                if (note == notes[0]) {
-                    noteList.add(createSpecialNoteGridView(note))
-                } else {
-                    if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
-                        noteList.add(createNoteGridView(note))
-                    }
+                if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
+                    noteList.add(createNoteGridView(note))
                 }
             }
+        }
+
+        if (isListView) {
+            noteList.add(0, createSpecialNoteListView(Note("")))
+        } else {
+            noteList.add(0, createSpecialNoteGridView(Note("")))
         }
 
         return noteList
@@ -248,6 +251,16 @@ class Main : Application()  {
         val orderLabel = Label("Order by: ")
         val orderDropDownOptions = FXCollections.observableArrayList("Length (asc)", "Length (desc)")
         val orderDropDown = ChoiceBox(orderDropDownOptions)
+        orderDropDown.selectionModel.selectedItemProperty().addListener {
+            _, _, newValue ->
+            if (newValue == orderDropDownOptions[0]) {
+                sortAscending = true
+            } else if (newValue == orderDropDownOptions[1]) {
+                sortAscending = false
+            }
+            reloadRoot()
+        }
+        orderDropDown.selectionModel.select(0)
         val orderGroup = HBox(orderLabel, orderDropDown).apply {
             this.spacing = 10.0
         }
