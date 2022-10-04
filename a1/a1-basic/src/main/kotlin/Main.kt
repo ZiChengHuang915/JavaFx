@@ -1,31 +1,75 @@
 import javafx.application.Application
 import javafx.collections.FXCollections
+import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.Label
-import javafx.scene.control.ScrollPane
+import javafx.scene.control.*
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 
-
 class Main : Application()  {
+    private val root = BorderPane()
+    private val isListView = true
+    // notes
+    // first note must be special and have empty text
+    private val notes = mutableListOf<Note>(
+        Note(""),
+        Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
+        Note("note2", true),
+        Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
+        Note("note4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
+        Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
+    // notes list view
+    private val notePaneList = VBox()
+    private var notesListView = createNotes(notes, true)
+    // notes grid view
+    private val notePaneGrid = FlowPane()
+    private val notesGridView = createNotes(notes, false)
+
     class Note(var text: String, var isArchived: Boolean = false)
 
     private fun createNotes(notes: MutableList<Note>, isListView: Boolean): MutableList<AnchorPane> {
         val noteList = mutableListOf<AnchorPane>()
         for (note in notes) {
             if (isListView) {
-                noteList.add(createNoteListView(note))
+                if (note == notes[0]) {
+                    noteList.add(createSpecialNoteListView(note))
+                } else {
+                    noteList.add(createNoteListView(note))
+                }
             } else {
                 noteList.add(createNoteGridView(note))
             }
         }
 
         return noteList
+    }
+
+    private fun createSpecialNoteListView(note: Note): AnchorPane {
+        val noteTextArea = TextArea().apply {
+            this.prefHeight = 42.0
+        }
+        val createButton = Button("Create")
+        createButton.setPrefSize(75.0, 42.0)
+        createButton.onAction = EventHandler {
+            val newNote = Note(noteTextArea.text)
+            notes.add(newNote)
+            notesListView = createNotes(notes, true)
+            reloadRoot()
+        }
+
+        val noteAnchorPane = AnchorPane(noteTextArea, createButton).apply {
+            this.border = Border(BorderStroke(Color.SALMON, BorderStrokeStyle.SOLID, CornerRadii(10.0), BorderWidths(10.0)))
+            this.prefHeight = 62.0
+        }
+        AnchorPane.setLeftAnchor(noteAnchorPane.children[0], 0.0)
+        AnchorPane.setTopAnchor(noteAnchorPane.children[0], 0.0)
+        AnchorPane.setRightAnchor(noteAnchorPane.children[0], 95.0)
+        AnchorPane.setTopAnchor(noteAnchorPane.children[1], 0.0)
+        AnchorPane.setRightAnchor(noteAnchorPane.children[1], 0.0)
+
+        return noteAnchorPane
     }
 
     private fun createNoteListView(note: Note): AnchorPane {
@@ -90,12 +134,36 @@ class Main : Application()  {
         return noteAnchorPane
     }
 
+    private fun reloadRoot() {
+        if (isListView) {
+            notePaneList.children.clear()
+        } else {
+            notePaneGrid.children.clear()
+        }
+
+        for (note in notesListView) {
+            notePaneList.children.add(note)
+        }
+        notePaneList.spacing = 10.0
+
+        for (note in notesGridView) {
+            notePaneGrid.children.add(note)
+            FlowPane.setMargin(note, Insets(10.0, 10.0, 10.0, 10.0))
+        }
+
+        // put notes in scrollpane
+        val notesScrollPane = if (isListView) {
+            ScrollPane(notePaneList)
+        } else {
+            ScrollPane(notePaneGrid)
+        }
+        notesScrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
+        notesScrollPane.isFitToWidth = true
+
+        root.center = notesScrollPane
+    }
+
     override fun start(stage: Stage) {
-        // states
-        val isListView = true
-
-        val root = BorderPane()
-
         // status bar
         val statusBar = Label("status bar")
 
@@ -129,44 +197,11 @@ class Main : Application()  {
             this.spacing = 10.0
         }
 
-        // notes
-        val notes = mutableListOf<Note>(
-            Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
-            Note("note2", true),
-            Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
-            Note("note4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
-            Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
-
-        // notes list view
-        val notePaneList = VBox()
-        val notesListView = createNotes(notes, true)
-        for (note in notesListView) {
-            notePaneList.children.add(note)
-        }
-        notePaneList.spacing = 10.0
-
-        // notes grid view
-        val notePaneGrid = FlowPane()
-        val notesGridView = createNotes(notes, false)
-        for (note in notesGridView) {
-            notePaneGrid.children.add(note)
-            FlowPane.setMargin(note, Insets(10.0, 10.0, 10.0, 10.0))
-        }
-
-        // put notes in scrollpane
-        val notesScrollPane = if (isListView) {
-            ScrollPane(notePaneList)
-        } else {
-            ScrollPane(notePaneGrid)
-        }
-        notesScrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER
-        notesScrollPane.isFitToWidth = true
-
+        reloadRoot()
         // root pane
         BorderPane.setMargin(toolBar, Insets(10.0, 10.0, 10.0, 10.0))
         root.top = toolBar
         root.bottom = statusBar
-        root.center = notesScrollPane
 
         // set stage
         stage.title = "CS349 - A1 Notes - zc3huang"
