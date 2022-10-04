@@ -7,24 +7,40 @@ import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Label
+import javafx.scene.control.ScrollPane
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 
 
 class Main : Application()  {
+    class Note(var text: String, var isArchived: Boolean = false) {
+    }
 
-    fun CreateNoteListView(text: String, isArchived: Boolean = false): AnchorPane {
-        var noteLabel = Label(text)
+    fun CreateNotes(notes: MutableList<Note>, isListView: Boolean): MutableList<AnchorPane> {
+        var noteList = mutableListOf<AnchorPane>()
+        for (note in notes) {
+            if (isListView) {
+                noteList.add(CreateNoteListView(note))
+            } else {
+                noteList.add(CreateNoteGridView(note))
+            }
+        }
+
+        return noteList
+    }
+
+    fun CreateNoteListView(note: Note): AnchorPane {
+        var noteLabel = Label(note.text)
         noteLabel.isWrapText = true
         noteLabel.prefWidth = 500.0
 
         var archiveCheckBox = CheckBox()
-        archiveCheckBox.isSelected = isArchived
+        archiveCheckBox.isSelected = note.isArchived
 
         var noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
 
-        if (isArchived) {
+        if (note.isArchived) {
             noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTGRAY, CornerRadii(10.0), null))
         } else {
             noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTYELLOW, CornerRadii(10.0), null))
@@ -45,7 +61,41 @@ class Main : Application()  {
         return noteAnchorPane
     }
 
+    fun CreateNoteGridView(note: Note): AnchorPane {
+        var noteLabel = Label(note.text)
+        noteLabel.isWrapText = true
+        noteLabel.setPrefSize(225.0, 180.0)
+
+        var archiveCheckBox = CheckBox()
+        archiveCheckBox.isSelected = note.isArchived
+
+        var noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
+
+        if (note.isArchived) {
+            noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTGRAY, CornerRadii(10.0), null))
+        } else {
+            noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTYELLOW, CornerRadii(10.0), null))
+        }
+
+        archiveCheckBox.selectedProperty().addListener {
+                _, _, newValue -> noteAnchorPane.background = Background(BackgroundFill(if (newValue.not()) Color.LIGHTYELLOW else Color.LIGHTGRAY, CornerRadii(10.0), null))
+        }
+        noteAnchorPane.setPrefSize(225.0, 225.0)
+        AnchorPane.setLeftAnchor(noteAnchorPane.children[0], 10.0)
+        AnchorPane.setRightAnchor(noteAnchorPane.children[0], 10.0)
+        AnchorPane.setTopAnchor(noteAnchorPane.children[0], 10.0)
+        AnchorPane.setBottomAnchor(noteAnchorPane.children[1], 10.0)
+        AnchorPane.setLeftAnchor(noteAnchorPane.children[1], 10.0)
+        AnchorPane.setBottomAnchor(noteAnchorPane.children[2], 10.0)
+        AnchorPane.setLeftAnchor(noteAnchorPane.children[2], 35.0)
+
+        return noteAnchorPane
+    }
+
     override fun start(stage: Stage) {
+        // states
+        var isListView = true
+
         val root = BorderPane()
 
         // status bar
@@ -81,24 +131,44 @@ class Main : Application()  {
             this.spacing = 10.0
         }
 
+        // notes
+        var notes = mutableListOf<Note>(
+            Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
+            Note("note2", true),
+            Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
+            Note("note4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
+            Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
+
         // notes list view
-        var notePane = VBox()
-        var notes = mutableListOf<AnchorPane>(
-            CreateNoteListView("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
-            CreateNoteListView("note2", true))
-        for (note in notes) {
-            notePane.children.add(note)
+        var notePaneList = VBox()
+        var notesListView = CreateNotes(notes, true)
+        for (note in notesListView) {
+            notePaneList.children.add(note)
         }
-        notePane.spacing = 10.0
+        notePaneList.spacing = 10.0
+
+        // notes grid view
+        var notePaneGrid = FlowPane()
+        var notesGridView = CreateNotes(notes, false)
+        for (note in notesGridView) {
+            notePaneGrid.children.add(note)
+            FlowPane.setMargin(note, Insets(10.0, 10.0, 10.0, 10.0))
+        }
+
+        // put notes in scrollpane
+        var notesScrollPane = if (isListView) {
+            ScrollPane(notePaneList)
+        } else {
+            ScrollPane(notePaneGrid)
+        }
+        notesScrollPane.hbarPolicy = ScrollPane.ScrollBarPolicy.NEVER;
+        notesScrollPane.isFitToWidth = true
 
         // root pane
-        BorderPane.setAlignment(toolBar, Pos.TOP_CENTER)
-        BorderPane.setAlignment(statusBar, Pos.BOTTOM_CENTER)
-        BorderPane.setAlignment(notePane, Pos.TOP_CENTER)
         BorderPane.setMargin(toolBar, Insets(10.0, 10.0, 10.0, 10.0))
         root.top = toolBar
         root.bottom = statusBar
-        root.center = notePane
+        root.center = notesScrollPane
 
         // set stage
         stage.title = "CS349 - A1 Notes - zc3huang"
