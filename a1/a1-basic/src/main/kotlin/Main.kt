@@ -14,16 +14,22 @@ import javafx.stage.Stage
 
 class Main : Application()  {
 
-    fun CreateNoteListView(text: String): AnchorPane {
+    fun CreateNoteListView(text: String, isArchived: Boolean = false): AnchorPane {
         var noteLabel = Label(text)
         noteLabel.isWrapText = true
         noteLabel.prefWidth = 500.0
 
         var archiveCheckBox = CheckBox()
+        archiveCheckBox.isSelected = isArchived
 
         var noteAnchorPane = AnchorPane(noteLabel, archiveCheckBox, Label("Archived"))
 
-        noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTYELLOW, CornerRadii(10.0), null))
+        if (isArchived) {
+            noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTGRAY, CornerRadii(10.0), null))
+        } else {
+            noteAnchorPane.background = Background(BackgroundFill(Color.LIGHTYELLOW, CornerRadii(10.0), null))
+        }
+
         archiveCheckBox.selectedProperty().addListener {
                 _, _, newValue -> noteAnchorPane.background = Background(BackgroundFill(if (newValue.not()) Color.LIGHTYELLOW else Color.LIGHTGRAY, CornerRadii(10.0), null))
         }
@@ -79,7 +85,7 @@ class Main : Application()  {
         var notePane = VBox()
         var notes = mutableListOf<AnchorPane>(
             CreateNoteListView("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
-            CreateNoteListView("note2"))
+            CreateNoteListView("note2", true))
         for (note in notes) {
             notePane.children.add(note)
         }
