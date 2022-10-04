@@ -13,6 +13,7 @@ class Main : Application()  {
     private var isListView = true
     private var isArchivedChecked = true
     private var sortAscending = true
+
     // notes
     private val notes = mutableListOf<Note>(
         Note("note1 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."),
@@ -26,6 +27,8 @@ class Main : Application()  {
     // notes grid view
     private val notePaneGrid = FlowPane()
     private var notesGridView = createNotes(notes, false)
+    // status bar
+    var statusBar = Label(getStatusString())
 
     class Note(var text: String, var isArchived: Boolean = false)
 
@@ -67,6 +70,7 @@ class Main : Application()  {
         createButton.onAction = EventHandler {
             val newNote = Note(noteTextArea.text)
             notes.add(newNote)
+            statusBar.text = getStatusString()
             reloadRoot()
         }
 
@@ -91,6 +95,7 @@ class Main : Application()  {
         val archiveCheckBox = CheckBox()
         archiveCheckBox.selectedProperty().addListener {
                 _, _, newValue -> note.isArchived = newValue
+            statusBar.text = getStatusString()
         }
         archiveCheckBox.isSelected = note.isArchived
 
@@ -124,6 +129,7 @@ class Main : Application()  {
         createButton.onAction = EventHandler {
             val newNote = Note(noteTextArea.text)
             notes.add(newNote)
+            statusBar.text = getStatusString()
             reloadRoot()
         }
 
@@ -149,6 +155,7 @@ class Main : Application()  {
         val archiveCheckBox = CheckBox()
         archiveCheckBox.selectedProperty().addListener {
                 _, _, newValue -> note.isArchived = newValue
+            statusBar.text = getStatusString()
         }
         archiveCheckBox.isSelected = note.isArchived
 
@@ -208,10 +215,18 @@ class Main : Application()  {
         root.center = notesScrollPane
     }
 
-    override fun start(stage: Stage) {
-        // status bar
-        val statusBar = Label("status bar")
+    private fun getStatusString(): String {
+        var archivedNotes = 0
+        for (note in notes) {
+            if (!note.isArchived) {
+                archivedNotes++
+            }
+        }
 
+        return "${notes.size} note${if (notes.size == 1) "" else "s"}, $archivedNotes of which ${if (archivedNotes == 1) "is" else "are"} active"
+    }
+
+    override fun start(stage: Stage) {
         // toolbar
         val viewLabel = Label("View: ")
         var viewGridButton = Button()
@@ -269,6 +284,11 @@ class Main : Application()  {
         HBox.setHgrow(region, Priority.ALWAYS)
 
         val clearButton = Button("Clear")
+        clearButton.onAction = EventHandler {
+            notes.clear()
+            statusBar.text = getStatusString()
+            reloadRoot()
+        }
 
         val toolBar = HBox(viewGroup, archivedGroup, orderGroup, region, clearButton).apply {
             this.spacing = 10.0
