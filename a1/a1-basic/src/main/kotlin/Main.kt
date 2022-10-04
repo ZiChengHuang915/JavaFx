@@ -10,7 +10,7 @@ import javafx.stage.Stage
 
 class Main : Application()  {
     private val root = BorderPane()
-    private val isListView = false
+    private var isListView = true
     // notes
     // first note must be special and have empty text
     private val notes = mutableListOf<Note>(
@@ -200,8 +200,25 @@ class Main : Application()  {
 
         // toolbar
         val viewLabel = Label("View: ")
-        val viewListButton = Button("List")
-        val viewGridButton = Button("Grid")
+        var viewGridButton = Button()
+        val viewListButton = Button("List").apply {
+            this.isDisable = isListView
+            this.onAction = EventHandler {
+                isListView = true
+                this.isDisable = isListView
+                viewGridButton.isDisable = !isListView
+                reloadRoot()
+            }
+        }
+        viewGridButton = Button("Grid").apply {
+            this.isDisable = !isListView
+            this.onAction = EventHandler {
+                isListView = false
+                this.isDisable = !isListView
+                viewListButton.isDisable = isListView
+                reloadRoot()
+            }
+        }
         val viewGroup = HBox(viewLabel, viewListButton, viewGridButton).apply {
             this.spacing = 10.0
         }
