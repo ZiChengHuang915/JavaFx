@@ -154,7 +154,7 @@ class Main : Application()  {
             notePaneGrid.children.add(note)
             FlowPane.setMargin(note, Insets(10.0, 10.0, 10.0, 10.0))
         }
-
+        
         // put notes in scrollpane
         var notesScrollPane = if (isListView) {
             ScrollPane(notePaneList)
