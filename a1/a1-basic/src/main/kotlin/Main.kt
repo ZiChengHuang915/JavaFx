@@ -21,14 +21,14 @@ class Main : Application()  {
         Note("note3 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus."),
         Note("note4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
         Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
+    // status bar
+    var statusBar = Label(getStatusString())
     // notes list view
     private val notePaneList = VBox()
     private var notesListView = createNotes(notes, true)
     // notes grid view
     private val notePaneGrid = FlowPane()
     private var notesGridView = createNotes(notes, false)
-    // status bar
-    var statusBar = Label(getStatusString())
 
     class Note(var text: String, var isArchived: Boolean = false)
 
