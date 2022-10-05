@@ -22,7 +22,7 @@ class Main : Application()  {
         Note("note4 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ante sapien, dapibus in iaculis ut, tempor ut lacus. Vivamus efficitur mollis eros, eget bibendum felis venenatis sit amet. Maecenas vitae tortor odio. Praesent finibus risus et urna vehicula, eu ultricies purus venenatis. Duis risus sapien, tincidunt in euismod eget, laoreet sit amet sapien."),
         Note("note5 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed magna sed elit molestie rutrum nec sed purus. Etiam scelerisque magna orci, et blandit nunc egestas sagittis. Aliquam nulla purus, malesuada in pretium vitae, commodo facilisis nunc. Aenean vel lacus at sapien facilisis mattis non quis diam. Quisque et velit ipsum. Suspendisse molestie pharetra nisi a egestas. Pellentesque justo elit, mollis ac nulla ultrices, consequat aliquam nisi. Aenean euismod sodales commodo. Donec congue pharetra purus ut sollicitudin. Sed porta enim vel justo finibus rhoncus sit amet nec dui. Cras feugiat, turpis in rutrum lacinia, elit odio imperdiet neque, ac venenatis dui metus ut sapien. Donec vulputate, nisl a placerat sagittis, augue felis ornare nisl, viverra varius tortor lorem eu est."))
     // status bar
-    var statusBar = Label(getStatusString())
+    private var statusBar = Label(getStatusString())
     // notes list view
     private val notePaneList = VBox()
     private var notesListView = createNotes(notes, true)
@@ -30,8 +30,10 @@ class Main : Application()  {
     private val notePaneGrid = FlowPane()
     private var notesGridView = createNotes(notes, false)
 
+    // define Note class
     class Note(var text: String, var isArchived: Boolean = false)
 
+    // create list of notes depending on the view type
     private fun createNotes(notes: MutableList<Note>, isListView: Boolean): MutableList<AnchorPane> {
         if (sortAscending) {
             notes.sortBy { n -> n.text.length }
@@ -42,6 +44,7 @@ class Main : Application()  {
         val noteList = mutableListOf<AnchorPane>()
         for (note in notes) {
             if (isListView) {
+                // add note to view depending on archive state
                 if (isArchivedChecked || !isArchivedChecked && !note.isArchived) {
                     noteList.add(createNoteListView(note))
                 }
@@ -52,6 +55,7 @@ class Main : Application()  {
             }
         }
 
+        // create the first special note
         if (isListView) {
             noteList.add(0, createSpecialNoteListView(Note("")))
         } else {
@@ -182,6 +186,7 @@ class Main : Application()  {
         return noteAnchorPane
     }
 
+    // reset the view when a change is made i.e. added new note
     private fun reloadRoot() {
         if (isListView) {
             notePaneList.children.clear()
@@ -256,7 +261,8 @@ class Main : Application()  {
         val archivedCheckBox = CheckBox()
         archivedCheckBox.isSelected = isArchivedChecked
         archivedCheckBox.selectedProperty().addListener {
-            _, _, newValue -> isArchivedChecked = newValue
+            _, _, newValue ->
+            isArchivedChecked = newValue
             reloadRoot()
         }
         val archivedGroup = HBox(archivedLabel, archivedCheckBox).apply {
@@ -295,6 +301,7 @@ class Main : Application()  {
         }
 
         reloadRoot()
+
         // root pane
         BorderPane.setMargin(toolBar, Insets(10.0, 10.0, 10.0, 10.0))
         root.top = toolBar
