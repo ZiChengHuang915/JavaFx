@@ -10,7 +10,9 @@ object DatasetSelectorController: ChoiceBox<String>() {
         selectionModel.select(0)
         this.selectionModel.selectedIndexProperty().addListener {
             _, _, newValue ->
-            Model.changeSelectedDataset(newValue as Int)
+            if (newValue as Int >= 0) {
+                Model.changeSelectedDataset(newValue)
+            }
         }
         minWidth = 175.0
     }

@@ -2,6 +2,7 @@ import javafx.application.Application
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.scene.Scene
+import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.SplitPane
 import javafx.scene.layout.BorderPane
@@ -22,7 +23,7 @@ class Main : Application()  {
         }
 
         // data entry section on left
-        val dataEntryItems = VBox(DataEntryNameView)
+        val dataEntryItems = VBox(DataEntryNameView, DataEntryRowView)
 
         val scroll = ScrollPane(dataEntryItems).apply {
             vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
@@ -82,8 +83,7 @@ object Model: Observable {
     }
 
     fun createNewDataset() {
-        println("create new dataset with name: " + currentNewDatasetName)
-        val newDataset = Dataset(currentNewDatasetName, mutableListOf())
+        val newDataset = Dataset(currentNewDatasetName, mutableListOf<Double>())
         datasets.add(newDataset)
         DatasetSelectorController.loadDatasets()
 
