@@ -8,11 +8,13 @@ import javafx.stage.Stage
 class Main : Application()  {
     override fun start(stage: Stage) {
         val view = View()
-        val ctrl = DatasetSelectorController()
+        val datasetSelectorController = DatasetSelectorController()
+        val datasetCreatorTextFieldController = DatasetCreatorTextFieldController()
+        val datasetCreatorButtonController = DatasetCreatorButtonController()
 
         stage.apply {
             title = "CS349 - A2 Graphs - zc3huang"
-            scene = Scene(VBox(view, ctrl) , 800.0, 600.0)
+            scene = Scene(VBox(view, datasetSelectorController, datasetCreatorTextFieldController, datasetCreatorButtonController) , 800.0, 600.0)
             minWidth = 640.0
             minHeight = 480.0
         }.show ()
@@ -24,8 +26,19 @@ object Model: Observable {
         mutableListOf<InvalidationListener?>()
 
     var selectedDataset = ""
-    fun increment() {
-        //++counter
+    var currentNewDatasetName = ""
+    fun changeSelectedDataset(newDataset: String) {
+        selectedDataset = newDataset
+        listeners.forEach { it?.invalidated(this) }
+    }
+
+    fun changeCurrentNewDatasetName(newDataset: String) {
+        currentNewDatasetName = newDataset
+        listeners.forEach { it?.invalidated(this) }
+    }
+
+    fun createNewDataset() {
+        println("create new dataset with name: " + currentNewDatasetName)
         listeners.forEach { it?.invalidated(this) }
     }
 
