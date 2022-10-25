@@ -4,11 +4,9 @@ import javafx.scene.control.Button
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.TextField
 
-class DatasetSelectorController: ChoiceBox<String>() {
+object DatasetSelectorController: ChoiceBox<String>() {
     init {
-        val datasetNames = Model.getDatasetNames()
-        val orderDropDownOptions = FXCollections.observableArrayList(datasetNames)
-        items.addAll(orderDropDownOptions)
+        loadDatasets()
         selectionModel.select(0)
         this.selectionModel.selectedIndexProperty().addListener {
             _, _, newValue ->
@@ -16,9 +14,16 @@ class DatasetSelectorController: ChoiceBox<String>() {
         }
         minWidth = 175.0
     }
+
+    fun loadDatasets() {
+        val datasetNames = Model.getDatasetNames()
+        val orderDropDownOptions = FXCollections.observableArrayList(datasetNames)
+        items.clear()
+        items.addAll(orderDropDownOptions)
+    }
 }
 
-class DatasetCreatorTextFieldController: TextField() {
+object DatasetCreatorTextFieldController: TextField() {
     init {
         maxWidth = 175.0
         textProperty().addListener {
@@ -28,7 +33,7 @@ class DatasetCreatorTextFieldController: TextField() {
     }
 }
 
-class DatasetCreatorButtonController: Button("Create") {
+object DatasetCreatorButtonController: Button("Create") {
     init {
         onAction = EventHandler {
             Model.createNewDataset()
@@ -36,7 +41,7 @@ class DatasetCreatorButtonController: Button("Create") {
     }
 }
 
-class DatasetVisualizerLineButtonController: Button("Line") {
+object DatasetVisualizerLineButtonController: Button("Line") {
     init {
         onAction = EventHandler {
             Model.visualizeDataset("Line")
@@ -44,7 +49,7 @@ class DatasetVisualizerLineButtonController: Button("Line") {
     }
 }
 
-class DatasetVisualizerBarButtonController: Button("Bar") {
+object DatasetVisualizerBarButtonController: Button("Bar") {
     init {
         onAction = EventHandler {
             Model.visualizeDataset("Bar")
@@ -52,7 +57,7 @@ class DatasetVisualizerBarButtonController: Button("Bar") {
     }
 }
 
-class DatasetVisualizerBarSEMButtonController: Button("Bar (SEM)") {
+object DatasetVisualizerBarSEMButtonController: Button("Bar (SEM)") {
     init {
         onAction = EventHandler {
             Model.visualizeDataset("Bar (SEM)")
@@ -60,7 +65,7 @@ class DatasetVisualizerBarSEMButtonController: Button("Bar (SEM)") {
     }
 }
 
-class DatasetVisualizerPieButtonController: Button("Pie") {
+object DatasetVisualizerPieButtonController: Button("Pie") {
     init {
         onAction = EventHandler {
             Model.visualizeDataset("Pie")

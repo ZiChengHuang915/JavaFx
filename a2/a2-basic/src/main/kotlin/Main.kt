@@ -13,17 +13,9 @@ class Main : Application()  {
         val view = View()
 
         // toolbar
-        val datasetSelectorController = DatasetSelectorController()
-        val datasetCreatorTextFieldController = DatasetCreatorTextFieldController()
-        val datasetCreatorButtonController = DatasetCreatorButtonController()
-        val datasetVisualizerLineButtonController = DatasetVisualizerLineButtonController()
-        val datasetVisualizerBarButtonController = DatasetVisualizerBarButtonController()
-        val datasetVisualizerBarSEMButtonController = DatasetVisualizerBarSEMButtonController()
-        val datasetVisualizerPieButtonController = DatasetVisualizerPieButtonController()
-
-        val selector = HBox(datasetSelectorController)
-        val creator = HBox(datasetCreatorTextFieldController, datasetCreatorButtonController)
-        val visualizer = HBox(datasetVisualizerLineButtonController, datasetVisualizerBarButtonController, datasetVisualizerBarSEMButtonController, datasetVisualizerPieButtonController)
+        val selector = HBox(DatasetSelectorController)
+        val creator = HBox(DatasetCreatorTextFieldController, DatasetCreatorButtonController)
+        val visualizer = HBox(DatasetVisualizerLineButtonController, DatasetVisualizerBarButtonController, DatasetVisualizerBarSEMButtonController, DatasetVisualizerPieButtonController)
         val toolbar = HBox(selector, creator, visualizer).apply {
             spacing = 30.0
         }
@@ -79,6 +71,14 @@ object Model: Observable {
 
     fun createNewDataset() {
         println("create new dataset with name: " + currentNewDatasetName)
+        val newDataset = Dataset(currentNewDatasetName, mutableListOf())
+        datasets.add(newDataset)
+        DatasetSelectorController.loadDatasets()
+
+        DatasetCreatorTextFieldController.text = ""
+        DatasetSelectorController.selectionModel.select(datasets.size - 1)
+        changeSelectedDataset(datasets.size - 1)
+
         listeners.forEach { it?.invalidated(this) }
     }
 
