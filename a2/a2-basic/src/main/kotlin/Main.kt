@@ -1,6 +1,7 @@
 import javafx.application.Application
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
+import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
@@ -23,10 +24,13 @@ class Main : Application()  {
         }
 
         // data entry section on left
-        val dataEntryItems = VBox(DataEntryNameView, DataEntryRowView)
+        val dataEntryItems = VBox(DataEntryNameView, DataEntryRowView, DataEntryAddButtonController).apply {
+            alignment = Pos.CENTER
+        }
 
         val scroll = ScrollPane(dataEntryItems).apply {
             vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
+            minWidth = 250.0
         }
 
         // visualization section on right
@@ -83,7 +87,7 @@ object Model: Observable {
     }
 
     fun createNewDataset() {
-        val newDataset = Dataset(currentNewDatasetName, mutableListOf<Double>())
+        val newDataset = Dataset(currentNewDatasetName, mutableListOf<Double>(0.0))
         datasets.add(newDataset)
         DatasetSelectorController.loadDatasets()
 
@@ -100,6 +104,12 @@ object Model: Observable {
 
     fun getCurrentDatasetName(): String {
         return datasets[selectedDatasetIndex].datasetName
+    }
+
+    fun addEntryToCurrentDataSet() {
+        datasets[selectedDatasetIndex].addEntry(0.0)
+
+        listeners.forEach { it?.invalidated(this) }
     }
 
     override fun addListener(listener: InvalidationListener?) {
