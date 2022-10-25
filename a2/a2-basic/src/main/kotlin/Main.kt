@@ -2,10 +2,12 @@ import javafx.application.Application
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.scene.Scene
+import javafx.scene.control.ScrollPane
+import javafx.scene.control.SplitPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
+import javafx.scene.layout.Pane
 import javafx.stage.Stage
-import javax.xml.crypto.Data
 
 class Main : Application()  {
     val root = BorderPane()
@@ -19,10 +21,19 @@ class Main : Application()  {
         val toolbar = HBox(selector, creator, visualizer).apply {
             spacing = 30.0
         }
-        val content = BorderPane()
+
+        // data entry section on left
+        val scroll = ScrollPane().apply {
+            vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
+        }
+
+        // visualization section on right
+        val pane = Pane()
+
+        val content = SplitPane(scroll, pane)
 
         root.top = toolbar
-        root.bottom = content
+        root.center = content
 
         stage.apply {
             title = "CS349 - A2 Graphs - zc3huang"
