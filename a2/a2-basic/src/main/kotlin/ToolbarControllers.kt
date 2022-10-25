@@ -6,15 +6,15 @@ import javafx.scene.control.TextField
 
 class DatasetSelectorController: ChoiceBox<String>() {
     init {
-//        onAction = EventHandler {
-//            Model.increment()
-//        }
-        val orderDropDownOptions = FXCollections.observableArrayList("dataset 1", "dataset 2")
+        val datasetNames = Model.getDatasetNames()
+        val orderDropDownOptions = FXCollections.observableArrayList(datasetNames)
         items.addAll(orderDropDownOptions)
-        this.selectionModel.selectedItemProperty().addListener {
+        selectionModel.select(0)
+        this.selectionModel.selectedIndexProperty().addListener {
             _, _, newValue ->
-            Model.changeSelectedDataset(newValue)
+            Model.changeSelectedDataset(newValue as Int)
         }
+        minWidth = 175.0
     }
 }
 

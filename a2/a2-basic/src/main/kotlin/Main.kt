@@ -5,6 +5,7 @@ import javafx.scene.Scene
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
+import javax.xml.crypto.Data
 
 class Main : Application()  {
     val root = BorderPane()
@@ -43,16 +44,36 @@ class Main : Application()  {
 object Model: Observable {
     private val listeners =
         mutableListOf<InvalidationListener?>()
+    val datasets = mutableListOf<Dataset>()
 
-    var selectedDataset = ""
+    var selectedDatasetIndex = -1
     var currentNewDatasetName = ""
-    fun changeSelectedDataset(newDataset: String) {
-        selectedDataset = newDataset
+
+    init {
+        // manually creating datasets
+        val quadratic = Dataset("quadratic", mutableListOf(0.1, 1.0, 4.0, 9.0, 16.0))
+        val negativeQuadratic = Dataset("negative quadratic", mutableListOf(-0.1, -1.0, -4.0, -9.0, -16.0))
+        datasets.add(quadratic)
+        datasets.add(negativeQuadratic)
+    }
+
+    fun getDatasetNames(): MutableList<String> {
+        val names = mutableListOf<String>()
+
+        for (dataset in datasets) {
+            names.add(dataset.datasetName)
+        }
+
+        return names
+    }
+
+    fun changeSelectedDataset(newDatasetIndex: Int) {
+        selectedDatasetIndex = newDatasetIndex
         listeners.forEach { it?.invalidated(this) }
     }
 
-    fun changeCurrentNewDatasetName(newDataset: String) {
-        currentNewDatasetName = newDataset
+    fun changeCurrentNewDatasetName(newDatasetName: String) {
+        currentNewDatasetName = newDatasetName
         listeners.forEach { it?.invalidated(this) }
     }
 
