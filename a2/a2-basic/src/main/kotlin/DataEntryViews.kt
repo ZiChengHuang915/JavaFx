@@ -2,12 +2,12 @@ import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.scene.control.Label
 
-class View() : Label(), InvalidationListener {
+object DataEntryNameView : Label(), InvalidationListener {
     init {
         Model.addListener(this)
         invalidated(null)
     }
     override fun invalidated(observable: Observable?) {
-        //text = Model.get().toString()
+        text = "Dataset name: " + Model.getCurrentDatasetName()
     }
 }

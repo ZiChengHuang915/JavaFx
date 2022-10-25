@@ -7,13 +7,12 @@ import javafx.scene.control.SplitPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.stage.Stage
 
 class Main : Application()  {
     val root = BorderPane()
     override fun start(stage: Stage) {
-        val view = View()
-
         // toolbar
         val selector = HBox(DatasetSelectorController)
         val creator = HBox(DatasetCreatorTextFieldController, DatasetCreatorButtonController)
@@ -23,7 +22,9 @@ class Main : Application()  {
         }
 
         // data entry section on left
-        val scroll = ScrollPane().apply {
+        val dataEntryItems = VBox(DataEntryNameView)
+
+        val scroll = ScrollPane(dataEntryItems).apply {
             vbarPolicy = ScrollPane.ScrollBarPolicy.ALWAYS
         }
 
@@ -49,7 +50,7 @@ object Model: Observable {
         mutableListOf<InvalidationListener?>()
     val datasets = mutableListOf<Dataset>()
 
-    var selectedDatasetIndex = -1
+    var selectedDatasetIndex = 0
     var currentNewDatasetName = ""
 
     init {
@@ -95,6 +96,10 @@ object Model: Observable {
 
     fun visualizeDataset(dataset: String) {
         listeners.forEach { it?.invalidated(this) }
+    }
+
+    fun getCurrentDatasetName(): String {
+        return datasets[selectedDatasetIndex].datasetName
     }
 
     override fun addListener(listener: InvalidationListener?) {
