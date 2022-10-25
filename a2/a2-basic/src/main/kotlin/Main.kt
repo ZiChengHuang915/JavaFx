@@ -2,19 +2,38 @@ import javafx.application.Application
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.scene.Scene
-import javafx.scene.layout.VBox
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
 import javafx.stage.Stage
 
 class Main : Application()  {
+    val root = BorderPane()
     override fun start(stage: Stage) {
         val view = View()
+
+        // toolbar
         val datasetSelectorController = DatasetSelectorController()
         val datasetCreatorTextFieldController = DatasetCreatorTextFieldController()
         val datasetCreatorButtonController = DatasetCreatorButtonController()
+        val datasetVisualizerLineButtonController = DatasetVisualizerLineButtonController()
+        val datasetVisualizerBarButtonController = DatasetVisualizerBarButtonController()
+        val datasetVisualizerBarSEMButtonController = DatasetVisualizerBarSEMButtonController()
+        val datasetVisualizerPieButtonController = DatasetVisualizerPieButtonController()
+
+        val selector = HBox(datasetSelectorController)
+        val creator = HBox(datasetCreatorTextFieldController, datasetCreatorButtonController)
+        val visualizer = HBox(datasetVisualizerLineButtonController, datasetVisualizerBarButtonController, datasetVisualizerBarSEMButtonController, datasetVisualizerPieButtonController)
+        val toolbar = HBox(selector, creator, visualizer).apply {
+            spacing = 30.0
+        }
+        val content = BorderPane()
+
+        root.top = toolbar
+        root.bottom = content
 
         stage.apply {
             title = "CS349 - A2 Graphs - zc3huang"
-            scene = Scene(VBox(view, datasetSelectorController, datasetCreatorTextFieldController, datasetCreatorButtonController) , 800.0, 600.0)
+            scene = Scene(root , 800.0, 600.0)
             minWidth = 640.0
             minHeight = 480.0
         }.show ()
@@ -39,6 +58,10 @@ object Model: Observable {
 
     fun createNewDataset() {
         println("create new dataset with name: " + currentNewDatasetName)
+        listeners.forEach { it?.invalidated(this) }
+    }
+
+    fun visualizeDataset(dataset: String) {
         listeners.forEach { it?.invalidated(this) }
     }
 

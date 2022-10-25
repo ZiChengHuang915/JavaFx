@@ -35,3 +35,35 @@ class DatasetCreatorButtonController: Button("Create") {
         }
     }
 }
+
+class DatasetVisualizerLineButtonController: Button("Line") {
+    init {
+        onAction = EventHandler {
+            Model.visualizeDataset("Line")
+        }
+    }
+}
+
+class DatasetVisualizerBarButtonController: Button("Bar") {
+    init {
+        onAction = EventHandler {
+            Model.visualizeDataset("Bar")
+        }
+    }
+}
+
+class DatasetVisualizerBarSEMButtonController: Button("Bar (SEM)") {
+    init {
+        onAction = EventHandler {
+            Model.visualizeDataset("Bar (SEM)")
+        }
+    }
+}
+
+class DatasetVisualizerPieButtonController: Button("Pie") {
+    init {
+        onAction = EventHandler {
+            Model.visualizeDataset("Pie")
+        }
+    }
+}
