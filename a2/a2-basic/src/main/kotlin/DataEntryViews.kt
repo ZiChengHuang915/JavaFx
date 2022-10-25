@@ -1,6 +1,7 @@
 import Model.selectedDatasetIndex
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
+import javafx.event.EventHandler
 import javafx.geometry.Insets
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -43,8 +44,15 @@ object DataEntryRowView: VBox(), InvalidationListener {
             }
 
             val currentDeleteButton = Button("X").apply {
+                if (Model.datasets[selectedDatasetIndex].entries.size == 1) {
+                    isDisable = true
+                }
                 padding = Insets(0.0, 5.0, 0.0, 5.0)
                 minHeight = 20.0
+            }
+            currentDeleteButton.onAction = EventHandler {
+                Model.datasets[selectedDatasetIndex].removeEntryAtIndex(i)
+                invalidated(null)
             }
 
             val currentRow = HBox(Label("Entry #$i").apply { padding = Insets(0.0, 5.0, 0.0, 5.0) },
