@@ -10,8 +10,10 @@ class Main : Application()  {
         val view = View()
         val ctrl = Controller()
         stage.apply {
-            title = "Hello, CS349!"
-            scene = Scene(VBox(view, ctrl) , 165.0, 100.0)
+            title = "CS349 - A2 Graphs - zc3huang"
+            scene = Scene(VBox(view, ctrl) , 800.0, 600.0)
+            minWidth = 640.0
+            minHeight = 480.0
         }.show ()
     }
 }
