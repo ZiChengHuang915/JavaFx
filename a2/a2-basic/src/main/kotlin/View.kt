@@ -8,6 +8,6 @@ class View() : Label(), InvalidationListener {
         invalidated(null)
     }
     override fun invalidated(observable: Observable?) {
-        text = Model.get().toString()
+        //text = Model.get().toString()
     }
 }
