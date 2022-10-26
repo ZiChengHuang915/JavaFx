@@ -40,7 +40,11 @@ object DataEntryRowView: VBox(), InvalidationListener {
             currentTextField.text = Model.datasets[selectedDatasetIndex].entries[i].toString()
             currentTextField.textProperty().addListener {
                     _, _, newValue ->
-                Model.datasets[selectedDatasetIndex].modifyEntryAtIndex(i, newValue.toDouble())
+                val newValueDouble = newValue.toDoubleOrNull()
+                if (newValueDouble != null) {
+                    Model.datasets[selectedDatasetIndex].modifyEntryAtIndex(i, newValue.toDouble())
+                    VisualizationView.invalidated(null)
+                }
             }
 
             val currentDeleteButton = Button("X").apply {
@@ -52,6 +56,7 @@ object DataEntryRowView: VBox(), InvalidationListener {
             }
             currentDeleteButton.onAction = EventHandler {
                 Model.datasets[selectedDatasetIndex].removeEntryAtIndex(i)
+                Model.refreshView()
                 invalidated(null)
             }
 

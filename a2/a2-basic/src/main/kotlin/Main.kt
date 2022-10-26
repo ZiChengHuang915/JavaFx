@@ -7,10 +7,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.SplitPane
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.stage.Stage
 
 enum class Views {
@@ -126,6 +123,10 @@ object Model: Observable {
 
     fun getCurrentDatasetName(): String {
         return datasets[selectedDatasetIndex].datasetName
+    }
+
+    fun getCurrentDatasetEntries(): MutableList<Double> {
+        return datasets[selectedDatasetIndex].entries
     }
 
     fun addEntryToCurrentDataSet() {
