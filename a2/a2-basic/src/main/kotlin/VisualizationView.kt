@@ -8,13 +8,14 @@ import kotlin.math.min
 import kotlin.math.sqrt
 
 object VisualizationView: Canvas(), InvalidationListener {
-    val paddingMultiplier = 0.9
+    private const val paddingMultiplier = 0.9
 
     init {
         Model.addListener(this)
         invalidated(null)
     }
 
+    // Draw the visualization depending on the currently selected view mode
     override fun invalidated(observable: Observable?) {
         val entries = Model.getCurrentDatasetEntries()
         val numEntries = entries.size
@@ -24,7 +25,9 @@ object VisualizationView: Canvas(), InvalidationListener {
 
         graphicsContext2D.apply {
             this.clearRect(0.0, 0.0, width, height)
+
             if (Model.currentViewType == Views.Line) {
+                // Draw dots
                 stroke = Color.RED
                 if (numEntries == 1) {
                     val xCoord = width / numEntries * 0.5
@@ -38,6 +41,7 @@ object VisualizationView: Canvas(), InvalidationListener {
                     }
                 }
 
+                // Draw lines connecting the dots
                 stroke = Color.BLACK
                 for (i in 0 until numEntries - 1) {
                     val xCoord1 = i * width / numEntries + width / numEntries * 0.5
@@ -47,31 +51,39 @@ object VisualizationView: Canvas(), InvalidationListener {
                     strokeLine(xCoord1, yCoord1, xCoord2, yCoord2)
                 }
             } else if (Model.currentViewType == Views.Bar) {
+                // Draw the Y = 0 line
                 stroke = Color.BLACK
                 val zeroYCoord = (height - height * (0 - minY) / (maxY - minY)) * paddingMultiplier + (1 - paddingMultiplier) / 2 * height
                 strokeLine(0.0, zeroYCoord, width, zeroYCoord + 2)
 
+                // Draw each bar
                 for (i in 0 until numEntries) {
+                    // Simulating my rainbow color (this is not a real rainbow by the way)
                     val rgbValue = i * 255 / numEntries
-                    println(rgbValue)
                     fill = Color.rgb(rgbValue, rgbValue / 2, 255 - rgbValue)
+
                     val xCoord = i * width / numEntries + width / numEntries * 0.5
                     val yCoord = (height - height * (entries[i] - minY) / (maxY - minY)) * paddingMultiplier + (1 - paddingMultiplier) / 2 * height
                     fillRect(xCoord, min(zeroYCoord, yCoord), width / numEntries * 0.4, abs(yCoord - zeroYCoord))
                 }
             } else if (Model.currentViewType == Views.BarSEM) {
+                // Draw the Y = 0 line
                 stroke = Color.BLACK
                 val zeroYCoord = (height - height * (0 - minY) / (maxY - minY)) * paddingMultiplier + (1 - paddingMultiplier) / 2 * height
                 strokeLine(0.0, zeroYCoord, width, zeroYCoord + 2)
 
+                // Draw each bar
                 for (i in 0 until numEntries) {
+                    // Simulating my rainbow color (this is not a real rainbow by the way)
                     val rgbValue = i * 255 / numEntries
                     fill = Color.rgb(rgbValue, rgbValue / 2, 255 - rgbValue)
+
                     val xCoord = i * width / numEntries + width / numEntries * 0.5
                     val yCoord = (height - height * (entries[i] - minY) / (maxY - minY)) * paddingMultiplier + (1 - paddingMultiplier) / 2 * height
                     fillRect(xCoord, min(zeroYCoord, yCoord), width / numEntries * 0.4, abs(yCoord - zeroYCoord))
                 }
 
+                // Drawing the 3 additional lines
                 val mean = sum / numEntries
                 val SEM = getStandardDeviation(entries) / sqrt(numEntries * 1.0)
                 val meanYCoord = (height - height * (mean - minY) / (maxY - minY)) * paddingMultiplier + (1 - paddingMultiplier) / 2 * height
@@ -83,6 +95,7 @@ object VisualizationView: Canvas(), InvalidationListener {
                 strokeLine(0.0, SEMLowerYCoord, width, SEMLowerYCoord + 2)
                 setLineDashes(0.0)
 
+                // Writing the mean and SEM
                 fill = Color.WHITE
                 opacity = 0.1
                 fillRect(15.0, 15.0, 175.0, 40.0)
@@ -94,7 +107,9 @@ object VisualizationView: Canvas(), InvalidationListener {
                 val arcRadius = min(width, height) / 2
                 var currentAngle = 0.0
 
+                // Drawing each arc
                 for (i in 0 until numEntries) {
+                    // Simulating my rainbow color (this is not a real rainbow by the way)
                     val rgbValue = i * 255 / numEntries
                     fill = Color.rgb(rgbValue, rgbValue / 2, 255 - rgbValue)
 
@@ -107,7 +122,8 @@ object VisualizationView: Canvas(), InvalidationListener {
         }
     }
 
-    fun getMaxValue(numbers: MutableList<Double>): Double {
+    // Helper functions
+    private fun getMaxValue(numbers: MutableList<Double>): Double {
         var curMax = Double.MIN_VALUE
         for (num in numbers) {
             if (num > curMax) {
@@ -118,7 +134,7 @@ object VisualizationView: Canvas(), InvalidationListener {
         return curMax
     }
 
-    fun getMinValue(numbers: MutableList<Double>): Double {
+    private fun getMinValue(numbers: MutableList<Double>): Double {
         var curMin = Double.MAX_VALUE
         for (num in numbers) {
             if (num < curMin) {
@@ -129,7 +145,7 @@ object VisualizationView: Canvas(), InvalidationListener {
         return curMin
     }
 
-    fun getSum(numbers: MutableList<Double>): Double {
+    private fun getSum(numbers: MutableList<Double>): Double {
         var sum = 0.0
         for (num in numbers) {
             sum += num
@@ -138,7 +154,7 @@ object VisualizationView: Canvas(), InvalidationListener {
         return sum
     }
 
-    fun getStandardDeviation(numbers: MutableList<Double>): Double {
+    private fun getStandardDeviation(numbers: MutableList<Double>): Double {
         val mean = getSum(numbers) / numbers.size
         var temp = 0.0
 

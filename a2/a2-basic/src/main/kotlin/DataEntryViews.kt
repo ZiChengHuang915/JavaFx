@@ -22,7 +22,7 @@ object DataEntryNameView : Label(), InvalidationListener {
 }
 
 object DataEntryRowView: VBox(), InvalidationListener {
-    val rows = mutableListOf<HBox>()
+    private val rows = mutableListOf<HBox>()
     init {
         Model.addListener(this)
         invalidated(null)
@@ -30,9 +30,11 @@ object DataEntryRowView: VBox(), InvalidationListener {
 
     override fun invalidated(observable: Observable?) {
         children.clear()
-        //println("DataEntryRowView is invalidated with selectedDatasetIndex = $selectedDatasetIndex")
         rows.clear()
+
+        // Set the data entry rows for each entry
         for (i in 0 until Model.datasets[selectedDatasetIndex].entries.size) {
+            // TextField for each entry to edit values
             val currentTextField = TextField().apply {
                 padding = Insets(0.0, 5.0, 0.0, 5.0)
                 minHeight = 20.0
@@ -47,6 +49,7 @@ object DataEntryRowView: VBox(), InvalidationListener {
                 }
             }
 
+            // Deletion Button for each entry
             val currentDeleteButton = Button("X").apply {
                 if (Model.datasets[selectedDatasetIndex].entries.size == 1) {
                     isDisable = true
