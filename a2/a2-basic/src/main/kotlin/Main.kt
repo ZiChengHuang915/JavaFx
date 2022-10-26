@@ -1,6 +1,7 @@
 import javafx.application.Application
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
@@ -11,6 +12,10 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
+
+enum class Views {
+    Line, Bar, BarSEM, Pie
+}
 
 class Main : Application()  {
     val root = BorderPane()
@@ -34,7 +39,17 @@ class Main : Application()  {
         }
 
         // visualization section on right
-        val pane = Pane()
+        val pane = Pane(VisualizationView)
+        VisualizationView.widthProperty().bind(pane.widthProperty())
+        VisualizationView.heightProperty().bind(pane.heightProperty())
+        pane.widthProperty().addListener {
+                _, _, _ ->
+            Model.refreshView()
+        }
+        pane.heightProperty().addListener {
+                _, _, _ ->
+            Model.refreshView()
+        }
 
         val content = SplitPane(scroll, pane)
 
@@ -57,6 +72,7 @@ object Model: Observable {
 
     var selectedDatasetIndex = 0
     var currentNewDatasetName = ""
+    var currentViewType = Views.Line
 
     init {
         // manually creating datasets
@@ -64,6 +80,10 @@ object Model: Observable {
         val negativeQuadratic = Dataset("negative quadratic", mutableListOf(-0.1, -1.0, -4.0, -9.0, -16.0))
         datasets.add(quadratic)
         datasets.add(negativeQuadratic)
+    }
+
+    fun refreshView() {
+        listeners.forEach { it?.invalidated(this) }
     }
 
     fun getDatasetNames(): MutableList<String> {
@@ -98,7 +118,9 @@ object Model: Observable {
         listeners.forEach { it?.invalidated(this) }
     }
 
-    fun visualizeDataset(dataset: String) {
+    fun visualizeDataset(dataset: Views) {
+        currentViewType = dataset
+
         listeners.forEach { it?.invalidated(this) }
     }
 

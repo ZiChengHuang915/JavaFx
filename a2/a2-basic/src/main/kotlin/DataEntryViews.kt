@@ -30,7 +30,7 @@ object DataEntryRowView: VBox(), InvalidationListener {
 
     override fun invalidated(observable: Observable?) {
         children.clear()
-        println("DataEntryRowView is invalidated with selectedDatasetIndex = $selectedDatasetIndex")
+        //println("DataEntryRowView is invalidated with selectedDatasetIndex = $selectedDatasetIndex")
         rows.clear()
         for (i in 0 until Model.datasets[selectedDatasetIndex].entries.size) {
             val currentTextField = TextField().apply {

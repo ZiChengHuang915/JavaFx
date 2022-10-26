@@ -46,7 +46,7 @@ object DatasetCreatorButtonController: Button("Create") {
 object DatasetVisualizerLineButtonController: Button("Line") {
     init {
         onAction = EventHandler {
-            Model.visualizeDataset("Line")
+            Model.visualizeDataset(Views.Line)
         }
     }
 }
@@ -54,7 +54,7 @@ object DatasetVisualizerLineButtonController: Button("Line") {
 object DatasetVisualizerBarButtonController: Button("Bar") {
     init {
         onAction = EventHandler {
-            Model.visualizeDataset("Bar")
+            Model.visualizeDataset(Views.Bar)
         }
     }
 }
@@ -62,7 +62,7 @@ object DatasetVisualizerBarButtonController: Button("Bar") {
 object DatasetVisualizerBarSEMButtonController: Button("Bar (SEM)") {
     init {
         onAction = EventHandler {
-            Model.visualizeDataset("Bar (SEM)")
+            Model.visualizeDataset(Views.BarSEM)
         }
     }
 }
@@ -70,7 +70,7 @@ object DatasetVisualizerBarSEMButtonController: Button("Bar (SEM)") {
 object DatasetVisualizerPieButtonController: Button("Pie") {
     init {
         onAction = EventHandler {
-            Model.visualizeDataset("Pie")
+            Model.visualizeDataset(Views.Pie)
         }
     }
 }
