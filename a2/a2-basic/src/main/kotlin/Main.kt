@@ -9,6 +9,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.control.SplitPane
 import javafx.scene.layout.*
 import javafx.stage.Stage
+import java.util.*
 
 enum class Views {
     Line, Bar, BarSEM, Pie
@@ -75,8 +76,12 @@ object Model: Observable {
         // manually creating datasets
         val quadratic = Dataset("quadratic", mutableListOf(0.1, 1.0, 4.0, 9.0, 16.0))
         val negativeQuadratic = Dataset("negative quadratic", mutableListOf(-0.1, -1.0, -4.0, -9.0, -16.0))
+        val alternating = Dataset("alternating", mutableListOf(-1.0, 3.0, -1.0, 3.0, -1.0, 3.0));
+        val inflation = Dataset("inflation", mutableListOf(4.8, 5.6, 1.5, 1.9, 0.2, 2.1, 1.6, 1.6, 1.0, 1.7, 2.7, 2.5, 2.3, 2.8, 1.9, 2.2, 2.0, 2.1, 2.4, 0.3, 1.8, 2.9, 1.5, 0.9, 1.9, 1.1, 1.4, 1.6, 2.3, 1.9, 0.7, 3.4, 6.8))
         datasets.add(quadratic)
         datasets.add(negativeQuadratic)
+        datasets.add(alternating)
+        datasets.add(inflation)
     }
 
     fun refreshView() {
