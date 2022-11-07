@@ -15,7 +15,7 @@ class Piece(val x: Int, val y: Int) {
      * Returns a string-representation of the piece.
      */
     override fun toString(): String {
-        return player.toString()
-        //return "($x,$y):${player.toString()}"
+        //return player.toString()
+        return "($x,$y):${player.toString()}"
     }
 }
