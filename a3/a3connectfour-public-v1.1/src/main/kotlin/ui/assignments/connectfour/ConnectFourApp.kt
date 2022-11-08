@@ -3,14 +3,12 @@ package ui.assignments.connectfour
 import javafx.application.Application
 import javafx.geometry.Pos
 import javafx.scene.Scene
-import javafx.scene.layout.Border
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.Pane
 import javafx.stage.Stage
 import ui.assignments.connectfour.ui.*
 
 class ConnectFourApp : Application() {
-    val root = BorderPane()
+    private val root = BorderPane()
 
     override fun start(stage: Stage) {
         root.left = PlayerOneControlView
