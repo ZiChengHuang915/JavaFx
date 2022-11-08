@@ -7,6 +7,7 @@ import javafx.animation.TranslateTransition
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.event.EventHandler
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -16,6 +17,7 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
+import javafx.scene.text.Font
 import javafx.scene.text.TextAlignment
 import javafx.util.Duration
 import ui.assignments.connectfour.model.*
@@ -45,11 +47,11 @@ object GridView: Pane(), InvalidationListener {
         }
         this.children.add(drawable)
         if (onNextPlayer.value == Player.ONE) {
-            animation.byX = -currentX
+            animation.byX = -currentX + 40.0
         } else {
             animation.byX = scene.width - 80.0 - currentX
         }
-        animation.byY = -150.0
+        animation.byY = -100.0
         animation.node = drawable
         animation.setOnFinished {
             this.children.remove(drawable)
@@ -97,7 +99,15 @@ object PlayerOneControlView: VBox(), InvalidationListener {
     override fun invalidated(observable: Observable?) {
         this.children.clear()
 
-        val playerOneLabel = Label("Player #1")
+        val playerOneLabel = Label("P1").apply {
+            padding = Insets(10.0)
+            background = Background(
+                BackgroundFill(Color.LIGHTGRAY,
+                    CornerRadii(10.0),
+                    Insets(5.0)))
+            textAlignment = TextAlignment.CENTER
+            font = Font("Verdana", 25.0)
+        }
         val gridPath = javaClass.getResource("/ui/assignments/connectfour/piece_red.png")?.toString()
         val gridNode = ImageView(gridPath)
         val pane = Pane().apply{
@@ -153,7 +163,15 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
     override fun invalidated(observable: Observable?) {
         this.children.clear()
 
-        val playerTwoLabel = Label("Player #2").apply { textAlignment = TextAlignment.RIGHT }
+        val playerTwoLabel = Label("P2").apply {
+            padding = Insets(10.0)
+            background = Background(
+                BackgroundFill(Color.LIGHTGRAY,
+                    CornerRadii(10.0),
+                    Insets(5.0)))
+            textAlignment = TextAlignment.RIGHT
+            font = Font("Verdana", 25.0)
+        }
         val gridPath = javaClass.getResource("/ui/assignments/connectfour/piece_yellow.png")?.toString()
         val gridNode = ImageView(gridPath)
         val pane = Pane().apply{
@@ -204,6 +222,14 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
 
 object StartButtonController: Button("Click here to start game!") {
     init {
+        padding = Insets(10.0)
+        background = Background(
+            BackgroundFill(Color.LIGHTGRAY,
+                CornerRadii(10.0),
+                Insets(5.0)))
+        textAlignment = TextAlignment.CENTER
+        font = Font("Verdana", 25.0)
+
         onAction = EventHandler {
             Model.startGame()
             isVisible = false
@@ -213,6 +239,13 @@ object StartButtonController: Button("Click here to start game!") {
 
 object EndView: Label(), InvalidationListener {
     init {
+        padding = Insets(10.0)
+        background = Background(
+            BackgroundFill(Color.LIGHTGRAY,
+                CornerRadii(10.0),
+                Insets(5.0)))
+        font = Font("Verdana", 25.0)
+
         isVisible = false
         textAlignment = TextAlignment.CENTER
         alignment = Pos.CENTER
