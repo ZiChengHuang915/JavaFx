@@ -26,11 +26,13 @@ import ui.assignments.connectfour.model.Model.onGameWin
 import ui.assignments.connectfour.model.Model.onNextPlayer
 import ui.assignments.connectfour.model.Model.onPieceDropped
 
+// View for the game grid
 object GridView: Pane(), InvalidationListener {
     init {
         invalidated(null)
     }
 
+    // If the drop is unsuccessful, animate the piece going back to the starting position
     fun unsuccessfulDropAnimation(currentX: Double) {
         val animation = TranslateTransition(Duration(500.0)).apply {
             interpolator = Interpolator.EASE_BOTH
@@ -39,6 +41,7 @@ object GridView: Pane(), InvalidationListener {
         }
 
         val drawable = Circle(currentX, 50.0, 40.0).apply {
+            // Decide the color of the circle depending on the player
             if (onNextPlayer.value == Player.ONE) {
                 fill = Color.RED
             } else {
@@ -46,12 +49,17 @@ object GridView: Pane(), InvalidationListener {
             }
         }
         this.children.add(drawable)
+
+        // Decide if it goes left or right depending on the player
         if (onNextPlayer.value == Player.ONE) {
             animation.byX = -currentX + 40.0
         } else {
             animation.byX = scene.width - 80.0 - currentX
         }
+        // I decided to animate it starting from the topmost row, then the piece goes up vertically as well because it is
+        // more realistic
         animation.byY = -100.0
+
         animation.node = drawable
         animation.setOnFinished {
             this.children.remove(drawable)
@@ -59,6 +67,7 @@ object GridView: Pane(), InvalidationListener {
         animation.play()
     }
 
+    // If the drop is successful, animate the piece going down
     fun dropAnimation(row: Int, player: Player) {
         val animation = TranslateTransition(Duration(500.0)).apply {
             interpolator = Interpolator.EASE_BOTH
@@ -74,6 +83,8 @@ object GridView: Pane(), InvalidationListener {
             }
         }
         this.children.add(drawable)
+
+        // The y difference depends on the row number stored in onPieceDropped.value
         animation.byY = onPieceDropped.value!!.y * 100.toDouble()
         animation.node = drawable
         animation.play()
@@ -111,6 +122,8 @@ object PlayerOneControlView: VBox(), InvalidationListener {
         val gridPath = javaClass.getResource("/ui/assignments/connectfour/piece_red.png")?.toString()
         val gridNode = ImageView(gridPath)
         val pane = Pane().apply{
+
+            // Snap to the nearest column
             this.addEventHandler(MouseDragEvent.MOUSE_DRAGGED) {
                 if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
                     if (it.sceneX > 0 && it.sceneX < scene.width - 80.0) {
@@ -123,6 +136,7 @@ object PlayerOneControlView: VBox(), InvalidationListener {
                 }
             }
 
+            // Drop on the current column
             this.addEventHandler(MouseEvent.MOUSE_RELEASED) {
                 if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
                     if (it.sceneX > 100 && it.sceneX <= 900) {
@@ -175,7 +189,8 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
         val gridPath = javaClass.getResource("/ui/assignments/connectfour/piece_yellow.png")?.toString()
         val gridNode = ImageView(gridPath)
         val pane = Pane().apply{
-            //background = Background(BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY))
+
+            // Snap to the nearest column
             this.addEventHandler(MouseDragEvent.MOUSE_DRAGGED) {
                 if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
                     if (it.sceneX > 0 && it.sceneX < scene.width - 80.0) {
@@ -188,6 +203,7 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
                 }
             }
 
+            // Drop on the current column
             this.addEventHandler(MouseEvent.MOUSE_RELEASED) {
                 if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
                     if (it.sceneX > 100 && it.sceneX <= 900) {
@@ -220,6 +236,7 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
     }
 }
 
+// Controller to start the game
 object StartButtonController: Button("Click here to start game!") {
     init {
         padding = Insets(10.0)
@@ -237,6 +254,7 @@ object StartButtonController: Button("Click here to start game!") {
     }
 }
 
+// Label for the end result, only show visible when game is actually finished
 object EndView: Label(), InvalidationListener {
     init {
         padding = Insets(10.0)

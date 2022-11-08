@@ -11,6 +11,7 @@ class ConnectFourApp : Application() {
     private val root = BorderPane()
 
     override fun start(stage: Stage) {
+        // Setting up the scene
         root.left = PlayerOneControlView
         root.right = PlayerTwoControlView
         root.center = StartButtonController
