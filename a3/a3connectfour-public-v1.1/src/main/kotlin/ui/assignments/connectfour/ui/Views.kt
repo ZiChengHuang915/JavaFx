@@ -19,12 +19,13 @@ import javafx.scene.shape.Circle
 import javafx.scene.text.TextAlignment
 import javafx.util.Duration
 import ui.assignments.connectfour.model.*
+import ui.assignments.connectfour.model.Model.onGameDraw
+import ui.assignments.connectfour.model.Model.onGameWin
 import ui.assignments.connectfour.model.Model.onNextPlayer
 import ui.assignments.connectfour.model.Model.onPieceDropped
 
-object View: Pane(), InvalidationListener {
+object GridView: Pane(), InvalidationListener {
     init {
-        Model.addListener(this)
         invalidated(null)
     }
 
@@ -100,34 +101,37 @@ object PlayerOneControlView: VBox(), InvalidationListener {
         val gridPath = javaClass.getResource("/ui/assignments/connectfour/piece_red.png")?.toString()
         val gridNode = ImageView(gridPath)
         val pane = Pane().apply{
-            //background = Background(BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY))
             this.addEventHandler(MouseDragEvent.MOUSE_DRAGGED) {
-                if (it.sceneX > 0 && it.sceneX < scene.width - 80.0) {
-                    if (it.sceneX > 100 && it.sceneX <= 900) {
-                        translateX = (it.sceneX.toInt() / 100 * 100 + 10).toDouble()
-                    } else {
-                        translateX = it.sceneX
+                if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
+                    if (it.sceneX > 0 && it.sceneX < scene.width - 80.0) {
+                        if (it.sceneX > 100 && it.sceneX <= 900) {
+                            translateX = (it.sceneX.toInt() / 100 * 100 + 10).toDouble()
+                        } else {
+                            translateX = it.sceneX
+                        }
                     }
                 }
             }
 
             this.addEventHandler(MouseEvent.MOUSE_RELEASED) {
-                if (it.sceneX > 100 && it.sceneX <= 900) {
-                    val col = it.sceneX.toInt() / 100 - 1
-                    Model.dropPiece(col)
+                if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
+                    if (it.sceneX > 100 && it.sceneX <= 900) {
+                        val col = it.sceneX.toInt() / 100 - 1
+                        Model.dropPiece(col)
 
-                    if(onPieceDropped.value != null) {
-                        View.dropAnimation(onPieceDropped.value!!.x, onPieceDropped.value!!.player)
-                    } else {
-                        View.unsuccessfulDropAnimation(it.sceneX)
-                        translateX = 0.0
-                        this.isVisible = false
+                        if (onPieceDropped.value != null) {
+                            GridView.dropAnimation(onPieceDropped.value!!.x, onPieceDropped.value!!.player)
+                        } else {
+                            GridView.unsuccessfulDropAnimation(it.sceneX)
+                            translateX = 0.0
+                            this.isVisible = false
 
-                        val timeline = Timeline(KeyFrame(Duration.millis(500.0), {
-                            this.isVisible = true
-                        }))
-                        timeline.cycleCount = 1
-                        timeline.play()
+                            val timeline = Timeline(KeyFrame(Duration.millis(500.0), {
+                                this.isVisible = true
+                            }))
+                            timeline.cycleCount = 1
+                            timeline.play()
+                        }
                     }
                 }
             }
@@ -155,32 +159,36 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
         val pane = Pane().apply{
             //background = Background(BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY))
             this.addEventHandler(MouseDragEvent.MOUSE_DRAGGED) {
-                if (it.sceneX > 0 && it.sceneX < scene.width - 80.0) {
-                    if (it.sceneX > 100 && it.sceneX <= 900) {
-                        translateX = (it.sceneX.toInt() / 100 * 100 + 10).toDouble() - (scene.width - 80.0)
-                    } else {
-                        translateX = it.sceneX - (scene.width - 80.0)
+                if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
+                    if (it.sceneX > 0 && it.sceneX < scene.width - 80.0) {
+                        if (it.sceneX > 100 && it.sceneX <= 900) {
+                            translateX = (it.sceneX.toInt() / 100 * 100 + 10).toDouble() - (scene.width - 80.0)
+                        } else {
+                            translateX = it.sceneX - (scene.width - 80.0)
+                        }
                     }
                 }
             }
 
             this.addEventHandler(MouseEvent.MOUSE_RELEASED) {
-                if (it.sceneX > 100 && it.sceneX <= 900) {
-                    val col = it.sceneX.toInt() / 100 - 1
-                    Model.dropPiece(col)
+                if (onGameWin.value == Player.NONE && onGameDraw.value == false) {
+                    if (it.sceneX > 100 && it.sceneX <= 900) {
+                        val col = it.sceneX.toInt() / 100 - 1
+                        Model.dropPiece(col)
 
-                    if(onPieceDropped.value != null) {
-                        View.dropAnimation(onPieceDropped.value!!.x, onPieceDropped.value!!.player)
-                    } else {
-                        View.unsuccessfulDropAnimation(it.sceneX)
-                        translateX = 0.0
-                        this.isVisible = false
+                        if (onPieceDropped.value != null) {
+                            GridView.dropAnimation(onPieceDropped.value!!.x, onPieceDropped.value!!.player)
+                        } else {
+                            GridView.unsuccessfulDropAnimation(it.sceneX)
+                            translateX = 0.0
+                            this.isVisible = false
 
-                        val timeline = Timeline(KeyFrame(Duration.millis(500.0), {
-                            this.isVisible = true
-                        }))
-                        timeline.cycleCount = 1
-                        timeline.play()
+                            val timeline = Timeline(KeyFrame(Duration.millis(500.0), {
+                                this.isVisible = true
+                            }))
+                            timeline.cycleCount = 1
+                            timeline.play()
+                        }
                     }
                 }
             }
@@ -201,5 +209,27 @@ object StartButtonController: Button("Click here to start game!") {
             isVisible = false
         }
     }
+}
 
+object EndView: Label(), InvalidationListener {
+    init {
+        isVisible = false
+        textAlignment = TextAlignment.CENTER
+        alignment = Pos.CENTER
+        onGameDraw.addListener(this)
+        onGameWin.addListener(this)
+        invalidated(null)
+    }
+    override fun invalidated(observable: Observable?) {
+        if (onGameDraw.value) {
+            this.text = "Game is a Draw!"
+            isVisible = true
+        } else if (onGameWin.value == Player.ONE) {
+            this.text = "Player #1 wins!"
+            isVisible = true
+        } else if (onGameWin.value == Player.TWO) {
+            this.text = "Player #2 wins!"
+            isVisible = true
+        }
+    }
 }

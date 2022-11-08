@@ -11,22 +11,7 @@ import java.lang.Exception
 /**
  * Model for Connect-Four.
  */
-object Model: Observable {
-    private val listeners =
-        mutableListOf<InvalidationListener?>()
-
-    fun refreshView() {
-        listeners.forEach { it?.invalidated(this) }
-    }
-
-    override fun addListener(listener: InvalidationListener?) {
-        listeners.add(listener)
-    }
-
-    override fun removeListener(listener: InvalidationListener?) {
-        listeners.remove(listener)
-    }
-
+object Model {
     /**
      * SimpleObjectValue notifies all listeners when its stored value is set. (This is different from a [SimpleObjectProperty] that only notifies al listeners when its stored value has changed.)
      */
