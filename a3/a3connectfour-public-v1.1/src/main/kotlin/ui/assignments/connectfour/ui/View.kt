@@ -1,27 +1,79 @@
 package ui.assignments.connectfour.ui
 
+import javafx.animation.Interpolator
+import javafx.animation.KeyFrame
+import javafx.animation.Timeline
+import javafx.animation.TranslateTransition
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.event.EventHandler
-import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
-import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseDragEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.scene.shape.Circle
 import javafx.scene.text.TextAlignment
+import javafx.util.Duration
 import ui.assignments.connectfour.model.*
 import ui.assignments.connectfour.model.Model.onNextPlayer
 import ui.assignments.connectfour.model.Model.onPieceDropped
 
-class View(): Pane(), InvalidationListener {
+object View: Pane(), InvalidationListener {
     init {
         Model.addListener(this)
         invalidated(null)
+    }
+
+    fun unsuccessfulDropAnimation(currentX: Double) {
+        val animation = TranslateTransition(Duration(500.0)).apply {
+            interpolator = Interpolator.EASE_BOTH
+            isAutoReverse = false
+            cycleCount = 1
+        }
+
+        val drawable = Circle(currentX, 50.0, 40.0).apply {
+            if (onNextPlayer.value == Player.ONE) {
+                fill = Color.RED
+            } else {
+                fill = Color.YELLOW
+            }
+        }
+        this.children.add(drawable)
+        if (onNextPlayer.value == Player.ONE) {
+            animation.byX = -currentX
+        } else {
+            animation.byX = scene.width - 80.0 - currentX
+        }
+        animation.byY = -150.0
+        animation.node = drawable
+        animation.setOnFinished {
+            this.children.remove(drawable)
+        }
+        animation.play()
+    }
+
+    fun dropAnimation(row: Int, player: Player) {
+        val animation = TranslateTransition(Duration(500.0)).apply {
+            interpolator = Interpolator.EASE_BOTH
+            isAutoReverse = false
+            cycleCount = 1
+        }
+
+        val drawable = Circle(150.0 + row * 100, 50.0, 40.0).apply {
+            if (player == Player.ONE) {
+                fill = Color.RED
+            } else {
+                fill = Color.YELLOW
+            }
+        }
+        this.children.add(drawable)
+        animation.byY = onPieceDropped.value!!.y * 100.toDouble()
+        animation.node = drawable
+        animation.play()
     }
 
     override fun invalidated(observable: Observable?) {
@@ -63,7 +115,20 @@ object PlayerOneControlView: VBox(), InvalidationListener {
                 if (it.sceneX > 100 && it.sceneX <= 900) {
                     val col = it.sceneX.toInt() / 100 - 1
                     Model.dropPiece(col)
-                    println(onPieceDropped.value)
+
+                    if(onPieceDropped.value != null) {
+                        View.dropAnimation(onPieceDropped.value!!.x, onPieceDropped.value!!.player)
+                    } else {
+                        View.unsuccessfulDropAnimation(it.sceneX)
+                        translateX = 0.0
+                        this.isVisible = false
+
+                        val timeline = Timeline(KeyFrame(Duration.millis(500.0), {
+                            this.isVisible = true
+                        }))
+                        timeline.cycleCount = 1
+                        timeline.play()
+                    }
                 }
             }
         }
@@ -103,7 +168,20 @@ object PlayerTwoControlView: VBox(), InvalidationListener {
                 if (it.sceneX > 100 && it.sceneX <= 900) {
                     val col = it.sceneX.toInt() / 100 - 1
                     Model.dropPiece(col)
-                    println(onPieceDropped.value)
+
+                    if(onPieceDropped.value != null) {
+                        View.dropAnimation(onPieceDropped.value!!.x, onPieceDropped.value!!.player)
+                    } else {
+                        View.unsuccessfulDropAnimation(it.sceneX)
+                        translateX = 0.0
+                        this.isVisible = false
+
+                        val timeline = Timeline(KeyFrame(Duration.millis(500.0), {
+                            this.isVisible = true
+                        }))
+                        timeline.cycleCount = 1
+                        timeline.play()
+                    }
                 }
             }
         }

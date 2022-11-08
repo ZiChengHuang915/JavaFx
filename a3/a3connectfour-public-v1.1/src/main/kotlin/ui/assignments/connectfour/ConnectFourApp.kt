@@ -13,7 +13,7 @@ class ConnectFourApp : Application() {
         root.left = PlayerOneControlView
         root.right = PlayerTwoControlView
         root.center = StartButtonController
-        root.bottom = View()
+        root.bottom = View
 
 
         val scene = Scene(root, 1000.0, 900.0)
