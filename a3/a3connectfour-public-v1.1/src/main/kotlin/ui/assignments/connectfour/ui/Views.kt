@@ -83,6 +83,7 @@ object GridView: Pane(), InvalidationListener {
             }
         }
         this.children.add(drawable)
+        drawable.toBack()
 
         // The y difference depends on the row number stored in onPieceDropped.value
         animation.byY = onPieceDropped.value!!.y * 100.toDouble()
