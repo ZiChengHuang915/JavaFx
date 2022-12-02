@@ -1,6 +1,7 @@
 package ui.assignments.a4notes
 
 import android.content.res.Resources
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +26,13 @@ class MainActivity : AppCompatActivity() {
                 layoutInflater.inflate(R.layout.note, null, false).apply {
                     findViewById<TextView>(R.id.note_title).text = "${VMNote.value?.title}"
                     findViewById<TextView>(R.id.note_content).text = "${VMNote.value?.content}"
+
+                    if (VMNote.value?.important == true) {
+                        this.setBackgroundColor(Color.YELLOW)
+                    } else if (VMNote.value?.archived == true) {
+                        this.setBackgroundColor(Color.GRAY)
+                    }
+
                     linearLayout.addView(this)
                 }
             }
