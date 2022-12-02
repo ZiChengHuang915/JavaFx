@@ -24,7 +24,7 @@ class NotesViewModel : ViewModel() {
     private val notes = MutableLiveData<MutableList<MutableLiveData<VMNote>>>(mutableListOf())
 
     // UI state indicating if archived notes should be displayed
-    private val viewArchived = MutableLiveData(false)
+    var viewArchived = MutableLiveData(false)
 
     companion object {
         val Factory = object : ViewModelProvider.Factory {
