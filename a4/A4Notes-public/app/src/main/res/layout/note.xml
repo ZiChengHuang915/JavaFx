@@ -14,7 +14,7 @@
     <TextView
             android:id="@+id/note_content"
             android:layout_width="241dp"
-            android:layout_height="33dp" tools:layout_editor_absoluteY="21dp"
+            android:layout_height="70dp" tools:layout_editor_absoluteY="21dp"
             tools:layout_editor_absoluteX="1dp" android:translationY="20dp" android:translationX="-120dp"/>
     <Button
             android:text="D"

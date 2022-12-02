@@ -111,7 +111,6 @@ class NotesViewModel : ViewModel() {
                 }
             }
         }
-        model.notes.sortWith{a, b -> model.compareNotes(a.id, b.id)}
     }
 
     fun getViewArchived() : MutableLiveData<Boolean?> {

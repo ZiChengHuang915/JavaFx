@@ -1,8 +1,10 @@
 package ui.assignments.a4notes
 
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Switch
@@ -26,6 +28,16 @@ class MainActivity : AppCompatActivity() {
                     linearLayout.addView(this)
                 }
             }
+
+            val dip = ((9 - list.size) * 70).toFloat()
+            val r: Resources = resources
+            val px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip,
+                r.displayMetrics
+            )
+            Log.println(Log.INFO, "", "$px")
+            findViewById<Button>(R.id.add_note_button).translationY = px
         }
     }
 

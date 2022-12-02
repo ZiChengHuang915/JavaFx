@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">A4 Notes - zc3huang</string>
     <string name="archivedSwitchText">Show Archived?</string>
+
+    <string name="delete_button_text">D</string>
+    <string name="archive_button_text">A</string>
+    <string name="add_note_button_text">+</string>
 </resources>
