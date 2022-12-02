@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Switch
@@ -33,6 +35,8 @@ class MainActivity : AppCompatActivity() {
                         this.setBackgroundColor(Color.GRAY)
                     }
 
+                    this.id = VMNote.value?.id!!
+                    Log.println(Log.INFO, "", "creating button with id: ${this.id}")
                     linearLayout.addView(this)
                 }
             }
@@ -49,11 +53,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun deleteNote(view: View) {
+        val noteId = (view.parent as ViewGroup).id
+        viewModel.deleteNote(noteId)
+    }
+
+    fun archiveNote(view: View) {
+        val noteId = (view.parent as ViewGroup).id
+
+        val notes = viewModel.getNotes().value
+        Log.println(Log.INFO, "", "$notes")
+
+        notes?.find { it.value?.id == noteId }?.apply {
+            if (this.value?.archived == true) {
+                viewModel.archiveNote(noteId, false)
+            } else {
+                viewModel.archiveNote(noteId, true)
+            }
+        }
+    }
+
+    private val viewModel : NotesViewModel by viewModels { NotesViewModel.Factory }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val viewModel : NotesViewModel by viewModels { NotesViewModel.Factory }
         viewModel.getNotes().observe(this) {
             Log.i("MainActivity", it?.fold("Visible Note IDs:") { acc, cur -> "$acc ${cur.value?.id}" } ?: "[ERROR]")
         }

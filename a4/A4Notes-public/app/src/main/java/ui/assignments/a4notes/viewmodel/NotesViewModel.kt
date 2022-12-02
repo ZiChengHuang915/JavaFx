@@ -116,5 +116,13 @@ class NotesViewModel : ViewModel() {
     fun getViewArchived() : MutableLiveData<Boolean?> {
         return viewArchived
     }
+
     // * Functions to forward requests from the View to the Model.
+    fun deleteNote(noteId: Int) {
+        model.removeNote(noteId)
+    }
+
+    fun archiveNote(noteId: Int, archived: Boolean) {
+        model.updateNoteArchived(noteId, archived)
+    }
 }

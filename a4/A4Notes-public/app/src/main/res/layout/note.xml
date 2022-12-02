@@ -17,15 +17,18 @@
             android:layout_height="70dp" tools:layout_editor_absoluteY="21dp"
             tools:layout_editor_absoluteX="1dp" android:translationY="20dp" android:translationX="-120dp"/>
     <Button
-            android:text="D"
+            android:text="@string/delete_button_text"
             android:layout_width="48dp"
             android:layout_height="48dp" android:id="@+id/button2" tools:layout_editor_absoluteY="16dp"
             tools:layout_editor_absoluteX="355dp" android:textSize="8sp" android:translationY="15dp"
-            android:translationX="-80dp"/>
+            android:translationX="-80dp"
+            android:onClick="deleteNote"
+            tools:ignore="SmallSp"/>
     <Button
-            android:text="A"
+            android:text="@string/archive_button_text"
             android:layout_width="48dp"
             android:layout_height="48dp" android:id="@+id/button3" tools:layout_editor_absoluteY="16dp"
             tools:layout_editor_absoluteX="305dp" android:textSize="8sp" android:translationY="15dp"
-            android:translationX="-60dp"/>
+            android:translationX="-60dp" tools:ignore="SmallSp"
+            android:onClick="archiveNote"/>
 </LinearLayout>
