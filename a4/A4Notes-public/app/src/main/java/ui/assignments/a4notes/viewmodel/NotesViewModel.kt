@@ -1,5 +1,6 @@
 package ui.assignments.a4notes.viewmodel
 
+import android.util.Log
 import androidx.databinding.Observable
 import androidx.databinding.Observable.OnPropertyChangedCallback
 import androidx.databinding.ObservableArrayList
@@ -24,7 +25,7 @@ class NotesViewModel : ViewModel() {
     private val notes = MutableLiveData<MutableList<MutableLiveData<VMNote>>>(mutableListOf())
 
     // UI state indicating if archived notes should be displayed
-    var viewArchived = MutableLiveData(false)
+    private val viewArchived = MutableLiveData(false)
 
     companion object {
         val Factory = object : ViewModelProvider.Factory {
@@ -38,7 +39,7 @@ class NotesViewModel : ViewModel() {
     init {
         // noteChangeCallback responds to all changes *within* a ModelNote:
         //   onPropertyChanged received notifications from ModelNote if its state has changed, and updates the
-        //   corresponding MVNote accordingly. The VMNote is wrapped in MutableLiveData and exposed as LiveData to the
+        //   corresponding VMNote accordingly. The VMNote is wrapped in MutableLiveData and exposed as LiveData to the
         //   View.
         val noteChangeCallback = object : OnPropertyChangedCallback() {
             override fun onPropertyChanged(modelNote: Observable?, propertyId: Int) {
@@ -96,5 +97,25 @@ class NotesViewModel : ViewModel() {
 
     // The following methods are missing:
     // * Functions to get / set the value of viewArchived.
+    fun setViewArchived(value: Boolean) {
+        viewArchived.value = value
+
+        model.notes.sortWith{a, b -> model.compareNotes(a.id, b.id)}
+        notes.value?.clear()
+        model.notes.forEach {
+            if (value) {
+                notes.value?.add(MutableLiveData(VMNote(it)))
+            } else {
+                if (!it.archived) {
+                    notes.value?.add(MutableLiveData(VMNote(it)))
+                }
+            }
+        }
+        model.notes.sortWith{a, b -> model.compareNotes(a.id, b.id)}
+    }
+
+    fun getViewArchived() : MutableLiveData<Boolean?> {
+        return viewArchived
+    }
     // * Functions to forward requests from the View to the Model.
 }
